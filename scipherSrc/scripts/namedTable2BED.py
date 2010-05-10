@@ -1,6 +1,6 @@
 import sys
 import optparse
-from gusPyCode.defs.JamesDefs import tableFile2namedTuple
+from scipherSrc.defs import tableFile2namedTuple
 
 strandReps = {'+':'+',
               '-':'-',
