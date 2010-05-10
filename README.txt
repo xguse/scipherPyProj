@@ -15,5 +15,5 @@ Linux/Unix/Mac: http://wp.me/p55zF-1Z
 
 For now, this is a pretty bare package.  I will continue to add new code as I refine
 more of my personal code to the point where others can use it without TOO many problems.
-To get the latest version of the repository, simply run "git pull" in the scipherPy.git 
-root directory.
+To get the latest version of the repository, simply run "git pull" in the project's  
+root git directory.
