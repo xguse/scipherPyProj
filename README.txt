@@ -2,9 +2,8 @@ README
 
 DOWNLOAD:
 1. Install git.
-2. Create new directory.
-3. Enter directory.
-4. Run "git clone git://github.com/xguse/scipherPyProj.git" at the prompt.
+2. Run "git clone git://github.com/xguse/scipherPyProj.git" at the prompt in the directory where
+you want the "scipherPyProj" root directory to be created.
 
 INSTALLATION:
 Place the full path of the "scipherSrc" directory in your PYTHONPATH environment variable.

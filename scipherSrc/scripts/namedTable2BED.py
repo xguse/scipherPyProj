@@ -1,6 +1,6 @@
 import sys
 import optparse
-from scipherSrc.defs import tableFile2namedTuple
+from scipherSrc.defs.files_io import tableFile2namedTuple
 
 strandReps = {'+':'+',
               '-':'-',
