@@ -133,10 +133,13 @@ class ParseFastQ(object):
     
     def getNextReadSeq(self):
         """Convenience method: calls self.getNext and returns only the readSeq."""
-        record = self.next()
-        if record:
+        try:
+            record = self.next()
             return record[1]
+        except StopIteration:
+            return None
 
+            
 
 
 class ParseFastA(object):
