@@ -82,12 +82,22 @@ class ParseFastQ(object):
     """Returns a read-by-read fastQ parser analogous to file.readline()"""
     def __init__(self,filePath,headerSymbols=['@','+']):
         """Returns a read-by-read fastQ parser analogous to file.readline().
-        Exmpl: parser.getNext()"""
+        Exmpl: parser.next()
+        -OR-
+        Its an iterator so you can do:
+        for rec in parser:
+            ... do something with rec ...
+
+        rec is tuple: (seqHeader,seqStr,qualHeader,qualStr)
+        """
         self._file = open(filePath, 'rU')
         self._currentLineNumber = 0
         self._hdSyms = headerSymbols
+        
+    def __iter__(self):
+        return self
     
-    def getNext(self):
+    def next(self):
         """Reads in next element, parses, and does minimal verification.
         Returns: tuple: (seqHeader,seqStr,qualHeader,qualStr)"""
         # ++++ Get Next Four Lines ++++
@@ -97,11 +107,17 @@ class ParseFastQ(object):
             self._currentLineNumber += 1 ## increment file position
             if line:
                 elemList.append(line.strip('\n'))
-            else: return None
+            else: 
+                elemList.append(None)
         
         # ++++ Check Lines For Expected Form ++++
+        trues = [bool(x) for x in elemList].count(True)
+        nones = elemList.count(None)
+        # -- Check for acceptable end of file --
+        if nones == 4:
+            raise StopIteration
         # -- Make sure we got 4 full lines of data --
-        assert "" not in elemList,\
+        assert trues == 4,\
                "** ERROR: It looks like I encountered a premature EOF or empty line.\n\
                Please check FastQ file near line #%s (plus or minus ~4 lines) and try again**" % (self._currentLineNumber)
         # -- Make sure we are in the correct "register" --
@@ -117,23 +133,38 @@ class ParseFastQ(object):
     
     def getNextReadSeq(self):
         """Convenience method: calls self.getNext and returns only the readSeq."""
-        record = self.getNext()
+        record = self.next()
         if record:
             return record[1]
-        else:return None
+
 
 
 class ParseFastA(object):
     """Returns a record-by-record fastA parser analogous to file.readline()."""
-    def __init__(self,filePath,key=lambda x: x[1:].split()[0]):
+    def __init__(self,filePath,joinWith='',key=None):
         """Returns a record-by-record fastA parser analogous to file.readline().
-        Exmpl: parser.getNext()
-        key == func used to parse the recName from HeaderInfo."""
+        Exmpl: parser.next()
+        Its ALSO an iterator so "for rec in parser" works too!
+        
+        <joinWith> is string to use to join rec lines with.
+        joinWith='' results in a single line with no breaks (usually what you want!)
+        
+        <key> is func used to parse the recName from HeaderInfo.
+        """
+        
         self._file = open(filePath, 'rU')
-        self._key = key
+        if key:
+            self._key = key
+        else:
+            self._key = lambda x:x[1:].split()[0]
         self.bufferLine = None   # stores next headerLine between records.
+        self.joinWith = joinWith
+        
     
-    def getNext(self):
+    def __iter__(self):
+        return self
+        
+    def next(self):
         """Reads in next element, parses, and does minimal verification.
         Returns: tuple: (seqName,seqStr)"""
         # ++++ Get A Record ++++
@@ -159,7 +190,7 @@ class ParseFastA(object):
         while 1:
             line = self._file.readline()
             if not line:
-                break
+                raise StopIteration
             elif line.startswith('>'):
                 self.bufferLine = line.strip('\n')
                 break
@@ -173,14 +204,17 @@ class ParseFastA(object):
             return None
         else:
             recHead = self._key(recHead)
-            return (recHead,''.join(recData))   
+            return (recHead,self.joinWith.join(recData))   
     
     def toDict(self):
         """Returns a single Dict populated with the fastaRecs
         contained in self._file."""
         fasDict = {}
         while 1:
-            fasRec = self.getNext()
+            try:
+                fasRec = self.next()
+            except StopIteration:
+                break
             if fasRec:
                 if not fasRec[0] in fasDict:
                     fasDict[fasRec[0]] = fasRec[1]
