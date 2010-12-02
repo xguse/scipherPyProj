@@ -1,6 +1,17 @@
 import collections
 import csv
 
+def xls2csv(xlsPath,csvPath,sep=','):
+    """Does what it says."""
+    
+    reader = csv.reader(open(xlsPath,"rb"))
+    csvFile = open(csvPath,'w')
+    for row in reader:
+        print row
+        #csvFile.write('%s\n' % (sep.join([str(x) for x in row])))
+        
+    csvFile.close()
+
 def tableFile2namedTuple(tablePath,sep='\t'):
     """Returns namedTuple from table file using first row fields as col headers."""
 
