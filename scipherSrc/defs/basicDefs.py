@@ -1,17 +1,22 @@
 def slidingWindow(sequence,winSize,step=1):
-    # verification code 
-    if not type(sequence) == type(''):
-        raise Exception("**ERROR** type(sequence) must be str.")
+    """Returns a generator that will iterate through
+    the defined chunks of input sequence.  Input sequence
+    must be iterable."""
+    
+    # Verify the inputs
+    try: it = iter(sequence)
+    except TypeError:
+        raise Exception("**ERROR** sequence must be iterable.")
     if not ((type(winSize) == type(0)) and (type(step) == type(0))):
         raise Exception("**ERROR** type(winSize) and type(step) must be int.")
     if step > winSize:
         raise Exception("**ERROR** step must not be larger than winSize.")
     if winSize > len(sequence):
         raise Exception("**ERROR** winSize must not be larger than sequence length.")
-
-    for i in range(0,len(sequence),step):
-        chunk = sequence[i:i+winSize]
-        if len(chunk) == winSize:
-            yield chunk
-        else:
-            break
+    
+    # Pre-compute number of chunks to emit
+    numOfChunks = len(sequence)-winSize+1
+    
+    # Do the work
+    for i in range(0,numOfChunks,step):
+        yield sequence[i:i+winSize]
