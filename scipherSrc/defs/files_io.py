@@ -1,16 +1,25 @@
 import collections
 import csv
 
-def xls2csv(xlsPath,csvPath,sep=','):
-    """Does what it says."""
-    
+def xls2csv(xlsPath,csvPath=None,sep=','):
+    """
+    Does what it says.
+    If csvPath==None, then print to stdOut.
+    """
     reader = csv.reader(open(xlsPath,"rb"))
-    csvFile = open(csvPath,'w')
-    for row in reader:
-        print row
-        #csvFile.write('%s\n' % (sep.join([str(x) for x in row])))
-        
-    csvFile.close()
+    
+    if csvPath != None:
+        csvFile = open(csvPath,'w')
+    
+    if csvPath != None:
+        for row in reader:
+            csvFile.write('%s\n' % (sep.join([str(x) for x in row])))
+    else:
+        for row in reader:
+            print '%s' % (sep.join([str(x) for x in row]))
+    
+    if csvPath != None:
+        csvFile.close()
 
 def tableFile2namedTuple(tablePath,sep='\t'):
     """Returns namedTuple from table file using first row fields as col headers."""
