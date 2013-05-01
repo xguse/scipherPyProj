@@ -16,3 +16,7 @@ For now, this is a pretty bare package.  I will continue to add new code as I re
 more of my personal code to the point where others can use it without TOO many problems.
 To get the latest version of the repository, simply run "git pull" in the project's  
 root git directory.
+
+.. image:: https://d2weczhvl823v0.cloudfront.net/xguse/scipherPyProj/trend.png
+  :alt: Bitdeli badge
+  :target: https://bitdeli.com/free
